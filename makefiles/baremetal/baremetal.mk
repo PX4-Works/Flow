@@ -82,7 +82,7 @@ LDSCRIPT		+= $(BAREMETTAL_EXPORT_DIR)build/ld.script
 #
 
 
-INCLUDE_DIRS		+=  
+INCLUDE_DIRS		+=  $(BAREMETTAL_EXPORT_DIR)/build
 
 LIB_DIRS		+= 
 LIBS				+= 

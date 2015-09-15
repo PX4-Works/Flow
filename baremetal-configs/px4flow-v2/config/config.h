@@ -33,12 +33,27 @@
 
 #pragma once
 
-#include <px4_config.h>
+#include <px4_macros.h>
+#include "stm32f4xx_conf.h"
+#include "stm32f4xx.h"
 
 
-#define getreg32(addr) (*((uint32_t *)(addr)))
-#define putreg32(regval, addr) ((*(uint32_t *)(addr)) = (regval))
-#define getreg16(addr) ((*(uint16_t *)(addr)))
-#define putreg16(regval, addr) ((*(uint16_t *)(addr)) = (regval))
-#define getreg8(addr) ((*(uint8_t *)(addr)))
-#define putreg8(regval, addr) ((*(uint8_t *)(addr)) = (regval))
+#define STM32_PCLK1_FREQUENCY (168000000ul/4)
+#define STM32_TIMCLK1          (2*STM32_PCLK1_FREQUENCY)
+
+#define STM32_SYSMEM_UID     0x1fff7a10     /* The 96-bit unique device identifier */
+
+# define CONFIG_USE_FLASH_FS 1
+TODO(STM32_SYSMEM_FSIZE should be in the SPL);
+# define STM32_FLASH_BASE       0x8000000
+
+# define CONFIG_STM32_FLASH_CONFIG_I
+# define CONFIG_STM32_STM32F40XX
+# define CONFIG_STM32_STM32F427
+
+/* RCC defines for Flash Code */
+
+# define STM32_RCC_BASE         0x40023800     /* 0x40023800-0x40023bff: Reset and Clock control RCC */
+# define STM32_RCC_CR_OFFSET    0x0000         /* Clock control register */
+
+# define STM32_FLASHIF_BASE   0x40023c00     /* 0x40023c00-0x40023fff: Flash memory interface */

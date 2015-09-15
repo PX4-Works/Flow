@@ -45,3 +45,5 @@
 #define PX4_OK  0
 #define FAR
 #define CONFIG_MEMSET_OPTSPEED 1
+
+#include "config.h"
