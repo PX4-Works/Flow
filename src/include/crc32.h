@@ -1,6 +1,8 @@
 /****************************************************************************
+ * include/crc.h
  *
- *   Copyright (C) 2013 PX4 Development Team. All rights reserved.
+ *   Copyright (C) 2010 Gregory Nutt. All rights reserved.
+ *   Author: Gregory Nutt <gnutt@nuttx.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -12,7 +14,7 @@
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the
  *    distribution.
- * 3. Neither the name PX4 nor the names of its contributors may be
+ * 3. Neither the name NuttX nor the names of its contributors may be
  *    used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -31,34 +33,51 @@
  *
  ****************************************************************************/
 
-#pragma once
+#ifndef __INCLUDE_CRC32_H
+#define __INCLUDE_CRC32_H
 
-#include <px4_config.h>
-#include <px4_macros.h>
-#include "stm32f4xx_conf.h"
-#include "stm32f4xx.h"
+/****************************************************************************
+ * Included Files
+ ****************************************************************************/
 
-TODO(Need to inject board.h or board_config.h via symlink);
+#include <sys/types.h>
+#include <stdint.h>
 
-#define STM32_PCLK1_FREQUENCY (168000000ul/4)
-#define STM32_TIMCLK1          (2*STM32_PCLK1_FREQUENCY)
+/****************************************************************************
+ * Public Function Prototypes
+ ****************************************************************************/
 
-TODO(STM32_SYSMEM_FSIZE should be in the SPL);
-#define STM32_SYSMEM_UID     0x1fff7a10     /* The 96-bit unique device identifier */
+#ifdef __cplusplus
+#define EXTERN extern "C"
+extern "C" {
+#else
+#define EXTERN extern
+#endif
 
-#define CONFIG_STM32_FLASH_CONFIG_I
-#define CONFIG_STM32_STM32F40XX
-#define CONFIG_STM32_STM32F427
-#define STM32_FLASH_BASE 0x8000000
+/****************************************************************************
+ * Name: crc32part
+ *
+ * Description:
+ *   Continue CRC calculation on a part of the buffer.
+ *
+ ****************************************************************************/
+__EXPORT
+EXTERN uint32_t crc32part(const uint8_t *src, size_t len,
+                          uint32_t crc32val);
 
-#define STM32_RCC_BASE       0x40023800     /* 0x40023800-0x40023bff: Reset and Clock control RCC */
-#define STM32_RCC_CR_OFFSET         0x0000  /* Clock control register */
+/****************************************************************************
+ * Name: crc32
+ *
+ * Description:
+ *   Return a 32-bit CRC of the contents of the 'src' buffer, length 'len'
+ *
+ ****************************************************************************/
+__EXPORT
+EXTERN uint32_t crc32(const uint8_t *src, size_t len);
 
-#define STM32_FLASHIF_BASE   0x40023c00     /* 0x40023c00-0x40023fff: Flash memory interface */
+#undef EXTERN
+#ifdef __cplusplus
+}
+#endif
 
-#define getreg32(addr) (*(uint32_t *)(addr))
-#define putreg32(regval, addr) ((*(uint32_t *)(addr)) = (regval))
-#define getreg16(addr) (*(uint16_t *)(addr))
-#define putreg16(regval, addr) ((*(uint16_t *)(addr)) = (regval))
-#define getreg8(addr) (*(uint8_t *)(addr))
-#define putreg8(regval, addr) ((*(uint8_t *)(addr)) = (regval))
+#endif /* __INCLUDE_CRC32_H */
