@@ -59,9 +59,9 @@
 # define CONFIG_HAVE_FILENAME     1 /* Has __FILE__ */
 
 /* Indicate that a local variable is not used */
-
+#if !defined(UNUSED)
 # define UNUSED(a) ((void)(a))
-
+#endif
 /* Attributes
  *
  * GCC supports weak symbols which can be used to reduce code size because
