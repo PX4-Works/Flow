@@ -35,7 +35,7 @@
 # Subset of system utility library
 #
 
-SRCS		 = 	 param_flash.c \
+SRCS		 = 	 flashfs.c \
 
 MAXOPTIMIZATION	 = -Os
 

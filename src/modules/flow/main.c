@@ -67,7 +67,7 @@
 #include "usbd_desc.h"
 #include "usbd_cdc_vcp.h"
 #include "main.h"
-#include "param_flash.h"
+#include "flashfs.h"
 #include <uavcan_if.h>
 #include <px4_macros.h>
 #include <px4_log.h>
@@ -296,7 +296,7 @@ int main(void)
 
         /* Give the Flash FS a buffer to allocate */
 
-        parameter_flash_init(sector_map, (uint8_t *) &nv_params, sizeof(nv_params));
+        parameter_flashfs_init(sector_map, (uint8_t *) &nv_params, sizeof(nv_params));
 
         uint8_t *buffer;
         size_t buf_size;
@@ -304,7 +304,7 @@ int main(void)
 
         /* Get the abstract allocation back as  nv_params_t */
 
-        if (0 != parameter_flash_alloc(parameters_token, &buffer, &buf_size)) {
+        if (0 != parameter_flashfs_alloc(parameters_token, &buffer, &buf_size)) {
             PX4_PANIC("Flash File System: Allocation Failed!");
             panic(FlashFSError);
         }
@@ -312,14 +312,14 @@ int main(void)
 
         /* Read parameters into ram */
 
-        int rv = parameter_flash_read(parameters_token, &buffer, &buf_size);
+        int rv = parameter_flashfs_read(parameters_token, &buffer, &buf_size);
 
         /* If there is no entry the save defaults. */
         if (rv == -ENOENT) {
 
             /* Ensure we have a sane FS */
 
-            rv = parameter_flash_erase();
+            rv = parameter_flashfs_erase();
             if (rv < 0) {
               PX4_PANIC("Flash File System: Erase failed!");
               panic(FlashFSError);
@@ -332,7 +332,7 @@ int main(void)
 
             /* Write default setting to Flash FS */
 
-            rv = parameter_flash_write(parameters_token, buffer, buf_size);
+            rv = parameter_flashfs_write(parameters_token, buffer, buf_size);
             if (rv < 0) {
               PX4_PANIC("Flash File System: Write failed!");
               panic(FlashFSError);
