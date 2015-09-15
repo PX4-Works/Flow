@@ -35,7 +35,8 @@
 # Subset of system utility library
 #
 
-SRCS		 = 	 lib_crc32.c 
+SRCS		 = 	 lib_crc32.c \
+			 panic.c
 
 ifeq ($(PX4_TARGET_OS),nuttx)
 endif
