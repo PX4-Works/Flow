@@ -31,17 +31,15 @@
  *
  ****************************************************************************/
 
-/**
- * @file panic_defs
+/*
+ * @file panic_defs.h
  *
- * Global flash based parameter store.
+ * @author David Sidrane <david_s5@nscdg.com>
  *
- * This provides the mechanisms to interface to the PX4
- * parameter system but replace the IO with non file based flash
- * i/o routines. So that the code my be implemented on a SMALL memory
- * foot print device.
+ * This file not a typical h file, is defines the panic codes for
+ * system and may be included several times in header or source
+ * file
  */
-
 
 /****************************************************************************
  * Pre-processor Definitions
