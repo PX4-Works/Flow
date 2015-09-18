@@ -36,9 +36,9 @@
 #include <px4_config.h>
 
 
-#define getreg32(addr) (*((uint32_t *)(addr)))
-#define putreg32(regval, addr) ((*(uint32_t *)(addr)) = (regval))
-#define getreg16(addr) ((*(uint16_t *)(addr)))
-#define putreg16(regval, addr) ((*(uint16_t *)(addr)) = (regval))
-#define getreg8(addr) ((*(uint8_t *)(addr)))
-#define putreg8(regval, addr) ((*(uint8_t *)(addr)) = (regval))
+#define getreg32(addr) (*((volatile  uint32_t *)(addr)))
+#define putreg32(regval, addr) ((*(volatile uint32_t *)(addr)) = (regval))
+#define getreg16(addr) ((*(volatile uint16_t *)(addr)))
+#define putreg16(regval, addr) ((*(volatile uint16_t *)(addr)) = (regval))
+#define getreg8(addr) ((*(volatile uint8_t *)(addr)))
+#define putreg8(regval, addr) ((*(volatile uint8_t *)(addr)) = (regval))
