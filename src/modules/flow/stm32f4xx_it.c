@@ -30,6 +30,7 @@
 #include "stm32f4xx_it.h"
 #include "stm32f4xx_conf.h"
 #include "main.h"
+#include "systemlib.h"
 
 #include "usb_core.h"
 #include "usb_dcd_int.h"
@@ -57,9 +58,8 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* Go to infinite loop when Hard Fault exception occurs */
-  while (1)
-  {
-  }
+
+  panic(HardFault);
 }
 
 /**
@@ -70,9 +70,8 @@ void HardFault_Handler(void)
 void MemManage_Handler(void)
 {
   /* Go to infinite loop when Memory Manage exception occurs */
-  while (1)
-  {
-  }
+
+  panic(MemManage);
 }
 
 /**
@@ -83,9 +82,9 @@ void MemManage_Handler(void)
 void BusFault_Handler(void)
 {
   /* Go to infinite loop when Bus Fault exception occurs */
-  while (1)
-  {
-  }
+
+  panic(MemManage);
+
 }
 
 /**
@@ -96,9 +95,8 @@ void BusFault_Handler(void)
 void UsageFault_Handler(void)
 {
   /* Go to infinite loop when Usage Fault exception occurs */
-  while (1)
-  {
-  }
+
+  panic(UsageFault);
 }
 
 /**
