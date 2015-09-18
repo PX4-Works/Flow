@@ -34,6 +34,7 @@
 #pragma once
 
 #include <px4_config.h>
+#include <px4_macros.h>
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
@@ -44,9 +45,10 @@
  * The same path also contains the standard data types uavcan.protocol.*.
  */
 
-#include "param_if.h"
+#include "systemlib.h"
+#include "parameters/param_if.h"
+#include "flashfs.h"
 #include <uavcan/protocol/param_server.hpp>
-
 
 /**
  * @file uavcan_parammgt.hpp
@@ -62,11 +64,16 @@
  */
 class ParamManager: public uavcan::IParamManager
 {
+  __attribute__((optimize("O0")))
   void getParamNameByIndex(Index index, Name& out_name) const override
   {
-    out_name = get_param_name_by_index(static_cast<uavcan_param_id_t>(index));
+    const char* name = get_param_name_by_index(static_cast<uavcan_param_id_t>(index));
+     if (name) {
+         out_name = name;
+     }
   }
 
+  __attribute__((optimize("O0")))
   void assignParamValue(const Name& name, const Value& value) override
   {
       uavcan_param_type_t type;
@@ -94,7 +101,8 @@ class ParamManager: public uavcan::IParamManager
       }
   }
 
-  void readParamValue(const Name& name, Value& out_value) const override
+  __attribute__((optimize("O0")))
+void readParamValue(const Name& name, Value& out_value) const override
   {
     void * p = nullptr;
     uavcan_param_type_t type;
@@ -111,33 +119,34 @@ class ParamManager: public uavcan::IParamManager
       return;
 
     case uavcan_int64:
-      out_value.integer_value = *static_cast<int64_t*>(p);
+      out_value.to<Value::Tag::integer_value>() = *static_cast<int64_t*>(p);
       break;
     case uavcan_float32:
-      out_value.real_value = *static_cast<float*>(p);
+      out_value.to<Value::Tag::real_value>() = *static_cast<float*>(p);
       break;
     case uavcan_uint8:
-      out_value.boolean_value = *static_cast<uint8_t*>(p);
+      out_value.to<Value::Tag::boolean_value>() = *static_cast<uint8_t*>(p);
       break;
     case uavcan_string:
-      out_value.string_value = static_cast<const char*>(p);
+      out_value.to<Value::Tag::string_value>()= static_cast<const char*>(p);
       break;
     }
   }
 
   int saveAllParams() override
   {
-      return 0;     // Zero means that everything is fine.
+      return persistence_save();     // Zero means that everything is fine.
   }
 
   int eraseAllParams() override
   {
-      return 0;
+      return default_all_param();
   }
 
   /**
    * Note that this method is optional. It can be left unimplemented.
    */
+  __attribute__((optimize("O0")))
   void readParamDefaultMaxMin(const Name& name, Value& out_default,
                               NumericValue& out_max, NumericValue& out_min) const override
   {
@@ -153,20 +162,20 @@ class ParamManager: public uavcan::IParamManager
       return;
 
     case uavcan_int64:
-      out_default.integer_value  = *static_cast<int64_t*>(def);
-      out_max.integer_value = *static_cast<int64_t*>(max);
-      out_min.integer_value = *static_cast<int64_t*>(min);
+      out_default.to<Value::Tag::integer_value>()  = *static_cast<int64_t*>(def);
+      out_max.to<NumericValue::Tag::integer_value>() = *static_cast<int64_t*>(max);
+      out_min.to<NumericValue::Tag::integer_value>() = *static_cast<int64_t*>(min);
       break;
     case uavcan_float32:
-      out_default.real_value = *static_cast<float*>(def);
-      out_max.real_value = *static_cast<float*>(max);
-      out_min.real_value = *static_cast<float*>(min);
+      out_default.to<Value::Tag::real_value>() = *static_cast<float*>(def);
+      out_max.to<NumericValue::Tag::real_value>() = *static_cast<float*>(max);
+      out_min.to<NumericValue::Tag::real_value>() = *static_cast<float*>(min);
       break;
     case uavcan_uint8:
-      out_default.boolean_value = *static_cast<uint8_t*>(def);
+      out_default.to<Value::Tag::boolean_value>() = *static_cast<uint8_t*>(def);
       break;
     case uavcan_string:
-      out_default.string_value = static_cast<char*>(def);
+      out_default.to<Value::Tag::string_value>() = static_cast<char*>(def);
       break;
     }
   }

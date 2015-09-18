@@ -238,39 +238,17 @@ void buffer_reset(void) {
 	buffer_reset_needed = 1;
 }
 
-#if defined(CONFIG_USE_FLASH_FS)
-
-static sector_descriptor_t  sector_map[] = {
-        {1, 16 * 1024, 0x08004000},
-        {2, 16 * 1024, 0x08008000},
-        {0, 0, 0},
-};
-
-typedef struct nv_params_t {
-  int test_int;
-  float test_float;
-} nv_params_t;
-
-
-typedef struct nv_params_buffer_t {
-  char reserved[FFHEADER_SIZE];
-  nv_params_t params;
-} nv_params_buffer_t;
-
-nv_params_buffer_t nv_params =  {
-    .params = {
-        .test_int = 12,
-        .test_float = 32.1
-    }
-};
-#endif
-
 /**
   * @brief  Main function.
   */
 int main(void)
 {
 	__enable_irq();
+
+#if defined(CONFIG_USE_FLASH_FS)
+        persistence_init();
+#endif
+
 
 	/* load settings and parameters */
 	global_data_reset_param_defaults();
@@ -292,54 +270,6 @@ int main(void)
         board_led_rgb(  0,255,  0, 3);
         board_led_rgb(  0,  0,255, 4);
 
-#if defined(CONFIG_USE_FLASH_FS)
-
-        /* Give the Flash FS a buffer to allocate */
-
-        parameter_flashfs_init(sector_map, (uint8_t *) &nv_params, sizeof(nv_params));
-
-        uint8_t *buffer;
-        size_t buf_size;
-        nv_params_t *params;
-
-        /* Get the abstract allocation back as  nv_params_t */
-
-        if (0 != parameter_flashfs_alloc(parameters_token, &buffer, &buf_size)) {
-            PX4_PANIC("Flash File System: Allocation Failed!");
-            panic(FlashFSError);
-        }
-        params = (nv_params_t *) buffer;
-
-        /* Read parameters into ram */
-
-        int rv = parameter_flashfs_read(parameters_token, &buffer, &buf_size);
-
-        /* If there is no entry the save defaults. */
-        if (rv == -ENOENT) {
-
-            /* Ensure we have a sane FS */
-
-            rv = parameter_flashfs_erase();
-            if (rv < 0) {
-              PX4_PANIC("Flash File System: Erase failed!");
-              panic(FlashFSError);
-          }
-
-            /* This should call out to initialize the params's structure */
-
-            params->test_int = 4;
-            params->test_float = 1.4;
-
-            /* Write default setting to Flash FS */
-
-            rv = parameter_flashfs_write(parameters_token, buffer, buf_size);
-            if (rv < 0) {
-              PX4_PANIC("Flash File System: Write failed!");
-              panic(FlashFSError);
-          }
-        }
-
-#endif
 	/* enable FPU on Cortex-M4F core */
 	SCB_CPACR |= ((3UL << 10 * 2) | (3UL << 11 * 2)); /* set CP10 Full Access and set CP11 Full Access */
 

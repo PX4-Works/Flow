@@ -52,8 +52,16 @@
  * uint8[<=128] string_value       # Length prefix is exactly one byte long, which ensures proper alignment of payload
  */
 
-/*                  varName             uavcan Name                     type            min              max            default */
-define_uavcan_param(test_bool,          "3dr.int_bool",          uavcan_uint8,              0,              1,          1)
-define_uavcan_param(test_int,           "3dr.int_test",          uavcan_int64,            -12,              12,          6 )
-define_uavcan_param(test_float,         "3dr.float_test",        uavcan_float32,        1.412,             4.2,          12.1)
-define_uavcan_param(test_string,        "3dr.string_test",       uavcan_string,             1,             128,         "default_value")
+/*                  varName             uavcan Name                     type            min              max       default */
+
+/* The version is a special case and can be used to reset the parameters. On power up the FW will check to see if the
+ * file system has a valid file of parameters that has the default value of the version number. If it does not the file will
+ * be created with defaults. So a uavcan param set <node id>  flow.param_version 0; uavcan param save <node id>
+ * will cause a reset of the parameters on the next reboot
+ */
+define_uavcan_param(version,            "flow.param_version",     uavcan_int64,              0,           100,         100)
+
+define_uavcan_param(test_bool,          "flow.int_bool",          uavcan_uint8,              0,              1,          1)
+define_uavcan_param(test_int,           "flow.int_test",          uavcan_int64,            -12,              12,          6 )
+define_uavcan_param(test_float,         "flow.float_test",        uavcan_float32,        1.412,             4.2,          2.1)
+define_uavcan_param(test_string,        "flow.string_test",       uavcan_string,             1,             128,         "default_value")

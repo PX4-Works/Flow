@@ -42,18 +42,17 @@
 #include <px4_log.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include <errno.h>
 #include <systemlib.h>
 #include "param_if.h"
 #include "flashfs.h"
 
-/* Compile time Ensure that the FFHEADER_SIZE and PERSISTANCE__HEADER_SIZE are the same*/
-CHECK_PERSISTANCE_SIZE();
 
 static sector_descriptor_t  sector_map[] = {
-        {1, 16 * 1024, 0x08004000},
-        {2, 16 * 1024, 0x08008000},
-        {0, 0, 0},
+	{1, 16 * 1024, 0x08004000},
+	{2, 16 * 1024, 0x08008000},
+	{0, 0, 0},
 };
 
 /****************************************************************************
@@ -74,54 +73,63 @@ static sector_descriptor_t  sector_map[] = {
 void persistence_init()
 {
 
-        /* Give the Flash FS a buffer to allocate */
+	/* Give the Flash FS a buffer to allocate */
 
-        size_t buf_size;
-        size_t param_size;
+	size_t buf_size;
+	size_t param_size;
 
-        uint8_t *buffer =  (uint8_t *)get_param_instance(&buf_size);
+	uint8_t *buffer = (uint8_t *)get_param_buffer(&buf_size);
 
-        parameter_flashfs_init(sector_map, buffer, buf_size);
+	parameter_flashfs_init(sector_map, buffer, buf_size);
 
-        /* Get the abstract allocation back as  nv_params_t */
+	/* Get the abstract allocation back as  nv_params_t */
 
-        if (0 != parameter_flashfs_alloc(parameters_token, &buffer, &param_size)) {
-            PX4_PANIC("Flash File System: Allocation Failed!");
-            panic(FlashFSError);
-        }
+	if (0 != parameter_flashfs_alloc(parameters_token, &buffer, &param_size)) {
+		PX4_PANIC("Flash File System: Allocation Failed!");
+		panic(FlashFSError);
+	}
 
-        buf_size = param_size;
+	buf_size = param_size;
 
-        float version = get_param_version();
+	int64_t version = get_param_version();
 
-        /* Read parameters into ram */
+	/* Read parameters into ram */
 
-        uint8_t *flash_buffer;
+	uint8_t *flash_buffer;
 
-        int rv = parameter_flashfs_read(parameters_token, &flash_buffer, &buf_size);
+	int rv = parameter_flashfs_read(parameters_token, &flash_buffer, &buf_size);
 
-        /* If there is no entry or the version has changed the save defaults. */
+	/* If there is no entry or the version has changed the save defaults. */
 
-        if (rv == -ENOENT || param_size != buf_size || ((uavcan_param_data_t*)flash_buffer)->version != version) {
+	bool match  = rv != -ENOENT && param_size == buf_size && ((uavcan_param_data_t *)flash_buffer)->version == version;
 
-            /* Ensure we have a sane FS */
 
-            rv = parameter_flashfs_erase();
-            if (rv < 0) {
-              PX4_PANIC("Flash File System: Erase failed!");
-              panic(FlashFSError);
-          }
+	if (match) {
 
-            default_all_param();
+		memcpy(buffer, flash_buffer, param_size);
 
-            /* Write default setting to Flash FS */
+	} else {
 
-            rv = parameter_flashfs_write(parameters_token, buffer, param_size);
-            if (rv < 0) {
-              PX4_PANIC("Flash File System: Write failed!");
-              panic(FlashFSError);
-          }
-        }
+		/* Ensure we have a sane FS */
+
+		rv = parameter_flashfs_erase();
+
+		if (rv < 0) {
+			PX4_PANIC("Flash File System: Erase failed!");
+			panic(FlashFSError);
+		}
+
+		default_all_param();
+
+		/* Write default setting to Flash FS */
+
+		rv = parameter_flashfs_write(parameters_token, buffer, param_size);
+
+		if (rv < 0) {
+			PX4_PANIC("Flash File System: Write failed!");
+			panic(FlashFSError);
+		}
+	}
 }
 
 
@@ -142,16 +150,9 @@ void persistence_init()
 int persistence_save(void)
 {
 
-  size_t param_size;
-  uint8_t *buffer;
+	size_t param_size;
+	uint8_t *buffer;
 
-  /* Get the abstract allocation back as  nv_params_t */
-
-  int rv  = parameter_flashfs_alloc(parameters_token, &buffer, &param_size);;
-
-  if (rv == 0) {
-
-      rv = parameter_flashfs_write(parameters_token, buffer, param_size);
-  }
-  return rv;
+	buffer = (uint8_t*) get_param_instance(&param_size);
+	return parameter_flashfs_write(parameters_token, buffer, param_size);
 }

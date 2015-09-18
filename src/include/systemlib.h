@@ -84,5 +84,44 @@ __BEGIN_DECLS
  ****************************************************************************/
 
 __EXPORT void panic(panic_code_t code);
+
+
+/****************************************************************************
+ * Name: persistence_init
+ *
+ * Description:
+ *   Called at start up to initialize the flash file system
+ *   and initialize in memory image from the flash file system
+ *
+ * Input Parameters:
+ * None
+ *
+ * Returned value:
+ * None
+ *
+ ****************************************************************************/
+
+__EXPORT void persistence_init(void);
+
+/****************************************************************************
+ * Name: persistence_save
+ *
+ * Description:
+ *   Called to commit persitant data to flashfs
+ *
+ * Input Parameters:
+ * None
+ *
+ * Returned value:
+ * None
+ *
+ ****************************************************************************/
+
+__EXPORT int persistence_save(void);
+
+
 __END_DECLS
+
+
+
 #endif /* _SYSTEMLIB__H */
