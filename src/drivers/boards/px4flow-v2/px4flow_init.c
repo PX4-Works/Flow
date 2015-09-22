@@ -152,11 +152,10 @@ __EXPORT int board_app_initialize(void)
  *
  ****************************************************************************/
 
-__EXPORT int board_reset(int status)
+__EXPORT int board_reset(int to_bootloader)
 {
-  volatile int j = 0;
-  j++;
-  return 0;
+    systemreset(to_bootloader);
+    return 0;
 }
 
 /****************************************************************************

@@ -34,6 +34,8 @@
 #pragma once
 
 #include <px4_config.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 
 #define getreg32(addr) (*((volatile  uint32_t *)(addr)))
@@ -42,3 +44,5 @@
 #define putreg16(regval, addr) ((*(volatile uint16_t *)(addr)) = (regval))
 #define getreg8(addr) ((*(volatile uint8_t *)(addr)))
 #define putreg8(regval, addr) ((*(volatile uint8_t *)(addr)) = (regval))
+
+void systemreset(bool to_bootloader);
