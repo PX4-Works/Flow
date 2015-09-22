@@ -1,6 +1,6 @@
 /****************************************************************************
  *
- *   Copyright (C) 2013 PX4 Development Team. All rights reserved.
+ *   Copyright (c) 2015 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,18 +31,23 @@
  *
  ****************************************************************************/
 
-#pragma once
+/*
+ * @file panic_defs.h
+ *
+ * @author David Sidrane <david_s5@nscdg.com>
+ *
+ * This file not a typical h file, is defines the panic codes for
+ * system and may be included several times in header or source
+ * file
+ */
 
-#include <px4_config.h>
-#include <stdint.h>
-#include <stdbool.h>
+/****************************************************************************
+ * Pre-processor Definitions
+ ****************************************************************************/
+define_panic_code(Faults, RGB_COLOR_RED, HardFault)
+define_panic_code(Faults, RGB_COLOR_RED, NMIFault)
+define_panic_code(Faults, RGB_COLOR_RED, MemManage)
+define_panic_code(Faults, RGB_COLOR_RED, BusFault)
+define_panic_code(Faults, RGB_COLOR_RED, UsageFault)
 
-
-#define getreg32(addr) (*((volatile  uint32_t *)(addr)))
-#define putreg32(regval, addr) ((*(volatile uint32_t *)(addr)) = (regval))
-#define getreg16(addr) ((*(volatile uint16_t *)(addr)))
-#define putreg16(regval, addr) ((*(volatile uint16_t *)(addr)) = (regval))
-#define getreg8(addr) ((*(volatile uint8_t *)(addr)))
-#define putreg8(regval, addr) ((*(volatile uint8_t *)(addr)) = (regval))
-
-void systemreset(bool to_bootloader);
+define_panic_code(System, RGB_COLOR_RED, FlashFSError)

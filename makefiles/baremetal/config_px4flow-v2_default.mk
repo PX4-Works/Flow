@@ -26,6 +26,7 @@ include $(PX4_MK_DIR)baremetal/uavcan_board_px4flow-v2.mk
 # Board support modules
 #
 MODULES		+= drivers/boards/px4flow-v2
+MODULES		+= drivers/stm32/flash
 
 #
 # General system control
@@ -41,6 +42,9 @@ MODULES		+= modules/libc
 # Flow
 MODULES		+= modules/flow
 
+# Sytem Lib
+MODULES		+= modules/systemlib/flashparams
+MODULES		+= modules/systemlib
 
 
 # Generate parameter XML file

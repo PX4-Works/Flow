@@ -71,6 +71,7 @@ $(BAREMETTAL_ARCHIVES): $(ARCHIVE_DIR)%.export: $(BAREMETTAL_SRC)
 	$(Q) (cd $(BUILD_DIR) && $(RMDIR) baremetal-configs)
 	$(Q) $(MKDIR) -p $(BUILD_DIR)baremetal-configs/baremetal-export/build
 	$(Q) $(COPY) $(PX4_BASE)baremetal-configs/$(board)/scripts/* $(BUILD_DIR)baremetal-configs/baremetal-export/build
+	$(Q) $(COPY) $(PX4_BASE)baremetal-configs/$(board)/config/* $(BUILD_DIR)baremetal-configs/baremetal-export/build
 	@$(ECHO) %% Exporting Baremetal for $(board) $(configuration) 
 	$(Q) $(MKDIR) -p $(dir $@)
 	$(Q) (cd $(BUILD_DIR)baremetal-configs && $(ZIP_CMD) -q -r $(BUILD_DIR)baremetal-configs/baremetal-export.zip  baremetal-export) 

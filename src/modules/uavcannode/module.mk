@@ -49,7 +49,9 @@ MODULE_STACKSIZE = 1024
 
 
 # Main
-SRCS += uavcannode_main.cpp       \
+SRCS += uavcannode_main.cpp \
+			 parameters/param_if.c	\
+			 parameters/persistence.c 
 
 
 #

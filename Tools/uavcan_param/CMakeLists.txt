@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project(tutorial_project)
+find_library(UAVCAN_LIB uavcan REQUIRED)
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -std=c++11")
+add_executable(gstool gstool.cpp platform_linux.cpp)
+target_link_libraries(gstool ${UAVCAN_LIB} rt)

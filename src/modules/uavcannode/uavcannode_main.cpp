@@ -97,6 +97,7 @@ UavcanNode::UavcanNode(uavcan::ICanDriver &can_driver, uavcan::ISystemClock &sys
 	_time_sync_slave(_node),
 	_flow_pulisher(_node),
 	_range_pulisher(_node),
+	_param_server(_node),
 	_reset_timer(_node)
 {
 
@@ -323,6 +324,12 @@ int UavcanNode::run()
               PX4_INFO("Failed to start time_sync_slave");
             _task_should_exit = true;
           }
+
+          const int server_start_res = _param_server.start(&_param_mgt);
+           if (server_start_res < 0)
+           {
+               _task_should_exit = true;
+           }
 
           _node.setModeOperational();
         }

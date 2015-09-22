@@ -1,8 +1,6 @@
 /****************************************************************************
- * include/nuttx/compiler.h
  *
- *   Copyright (C) 2007-2009, 2012-2013, 2015 Gregory Nutt. All rights reserved.
- *   Author: Gregory Nutt <gnutt@nuttx.org>
+ *   Copyright (c) 2015 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -14,7 +12,7 @@
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the
  *    distribution.
- * 3. Neither the name NuttX nor the names of its contributors may be
+ * 3. Neither the name PX4 nor the names of its contributors may be
  *    used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -33,17 +31,97 @@
  *
  ****************************************************************************/
 
-#pragma once
+/**
+ * @file systemlib.h
+ *
+ *
+ * This provides the mechanisms to interface to the PX4
+ * system  lib
+ */
+
+#ifndef _SYSTEMLIB__H
+#define _SYSTEMLIB__H
 
 /****************************************************************************
  * Included Files
  ****************************************************************************/
+
+#include <stdint.h>
+#include <stdbool.h>
+
+
+
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
-#define __LINUX_ERRNO_EXTENSIONS__
-#define PX4_OK  0
-#define FAR
-#define CONFIG_MEMSET_OPTSPEED 1
+#undef define_panic_code
+#define define_panic_code(pclass, led, code) code,
 
-#include "config.h"
+typedef enum panic_code_t {
+  FirstPanicCode,
+#include "modules/systemlib/panic_defs.h"
+  FirstPanicSize,
+
+} panic_code_t;
+#undef define_panic_code
+
+/****************************************************************************
+ * Public Functions
+ ****************************************************************************/
+__BEGIN_DECLS
+
+/****************************************************************************
+ * Name: panic
+ *
+ * Description:
+ *   This function to indicate a system failure
+ *
+ * Input Parameters:
+ *   code - a panic Code
+ *
+ * Returned value:
+ *  None
+ ****************************************************************************/
+
+__EXPORT void panic(panic_code_t code);
+
+
+/****************************************************************************
+ * Name: persistence_init
+ *
+ * Description:
+ *   Called at start up to initialize the flash file system
+ *   and initialize in memory image from the flash file system
+ *
+ * Input Parameters:
+ * None
+ *
+ * Returned value:
+ * None
+ *
+ ****************************************************************************/
+
+__EXPORT void persistence_init(void);
+
+/****************************************************************************
+ * Name: persistence_save
+ *
+ * Description:
+ *   Called to commit persitant data to flashfs
+ *
+ * Input Parameters:
+ * None
+ *
+ * Returned value:
+ * None
+ *
+ ****************************************************************************/
+
+__EXPORT int persistence_save(void);
+
+
+__END_DECLS
+
+
+
+#endif /* _SYSTEMLIB__H */

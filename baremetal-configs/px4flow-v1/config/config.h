@@ -34,15 +34,13 @@
 #pragma once
 
 #include <px4_config.h>
-#include <stdint.h>
-#include <stdbool.h>
+#include <px4_macros.h>
+#include "stm32f4xx_conf.h"
+#include "stm32f4xx.h"
 
+TODO(Need to inject board.h or board_config.h via symlink);
 
-#define getreg32(addr) (*((volatile  uint32_t *)(addr)))
-#define putreg32(regval, addr) ((*(volatile uint32_t *)(addr)) = (regval))
-#define getreg16(addr) ((*(volatile uint16_t *)(addr)))
-#define putreg16(regval, addr) ((*(volatile uint16_t *)(addr)) = (regval))
-#define getreg8(addr) ((*(volatile uint8_t *)(addr)))
-#define putreg8(regval, addr) ((*(volatile uint8_t *)(addr)) = (regval))
+#define STM32_PCLK1_FREQUENCY (168000000ul/4)
+#define STM32_TIMCLK1          (2*STM32_PCLK1_FREQUENCY)
 
-void systemreset(bool to_bootloader);
+#define STM32_SYSMEM_UID     0x1fff7a10     /* The 96-bit unique device identifier */

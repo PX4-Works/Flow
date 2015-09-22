@@ -43,6 +43,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
+#include <errno.h>
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx.h"
 
@@ -66,8 +67,11 @@
 #include "usbd_desc.h"
 #include "usbd_cdc_vcp.h"
 #include "main.h"
+#include "flashfs.h"
 #include <uavcan_if.h>
 #include <px4_macros.h>
+#include <px4_log.h>
+#include <systemlib.h>
 
 //#define CONFIG_USE_PROBES
 #include <bsp/probes.h>
@@ -241,6 +245,11 @@ int main(void)
 {
 	__enable_irq();
 
+#if defined(CONFIG_USE_FLASH_FS)
+        persistence_init();
+#endif
+
+
 	/* load settings and parameters */
 	global_data_reset_param_defaults();
 	global_data_reset();
@@ -258,7 +267,7 @@ int main(void)
         board_led_rgb(255,  0,  0, 1);
         board_led_rgb(255,  0,  0, 2);
         board_led_rgb(255,  0,  0, 3);
-                board_led_rgb(  0,255,  0, 3);
+        board_led_rgb(  0,255,  0, 3);
         board_led_rgb(  0,  0,255, 4);
 
 	/* enable FPU on Cortex-M4F core */

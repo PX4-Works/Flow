@@ -1,8 +1,6 @@
 /****************************************************************************
- * include/nuttx/compiler.h
  *
- *   Copyright (C) 2007-2009, 2012-2013, 2015 Gregory Nutt. All rights reserved.
- *   Author: Gregory Nutt <gnutt@nuttx.org>
+ *   Copyright (c) 2015 PX4 Development Team. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -14,7 +12,7 @@
  *    notice, this list of conditions and the following disclaimer in
  *    the documentation and/or other materials provided with the
  *    distribution.
- * 3. Neither the name NuttX nor the names of its contributors may be
+ * 3. Neither the name PX4 nor the names of its contributors may be
  *    used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -33,17 +31,63 @@
  *
  ****************************************************************************/
 
-#pragma once
+/**
+ * @file flashparam.c
+ *
+ * Global flash based parameter store.
+ *
+ * This provides the mechanisms to interface to the PX4
+ * parameter system but replace the IO with non file based flash
+ * i/o routines. So that the code my be implemented on a SMALL memory
+ * foot print device.
+ */
 
-/****************************************************************************
- * Included Files
- ****************************************************************************/
+#include <px4_config.h>
+#include <bsp/board.h>
+#include <systemlib.h>
+
 /****************************************************************************
  * Pre-processor Definitions
  ****************************************************************************/
-#define __LINUX_ERRNO_EXTENSIONS__
-#define PX4_OK  0
-#define FAR
-#define CONFIG_MEMSET_OPTSPEED 1
 
-#include "config.h"
+/****************************************************************************
+ * Private Types
+ ****************************************************************************/
+/****************************************************************************
+ * Private Function Prototypes
+ ****************************************************************************/
+
+/****************************************************************************
+ * Private Data
+ ****************************************************************************/
+/****************************************************************************
+ * Public Data
+ ****************************************************************************/
+
+/****************************************************************************
+ * Private Functions
+ ****************************************************************************/
+
+/****************************************************************************
+ * Public Functions
+ ****************************************************************************/
+
+/****************************************************************************
+ * Name: panic
+ *
+ * Description:
+ *   This function to indicate a system failure
+ *
+ * Input Parameters:
+ *   None
+ *
+ * Returned value:
+ *  None
+ ****************************************************************************/
+
+void panic(panic_code_t code)
+{
+  board_led_rgb(255,  0,  0, 4);
+  while(1);
+}
+

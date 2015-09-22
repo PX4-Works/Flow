@@ -38,6 +38,7 @@ MODULES		+= modules/libc
 # Flow
 MODULES		+= modules/flow
 
+MODULES		+= modules/systemlib
 
 
 # Generate parameter XML file

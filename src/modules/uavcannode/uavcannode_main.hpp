@@ -40,7 +40,8 @@
 #include <uavcan/equipment/range_sensor/Measurement.hpp>
 #include <threedr/equipment/flow/optical_flow/LegacyRawSample.hpp>
 #include <uavcan/node/timer.hpp>
-
+#include <uavcan/protocol/param_server.hpp>
+#include "uavcannode_parammgt.hpp"
 #include "uavcan_if.h"
 
 /**
@@ -133,6 +134,9 @@ private:
         uavcan::Publisher<uavcan::equipment::range_sensor::Measurement> _range_pulisher;
 	void cb_beginfirmware_update(const uavcan::ReceivedDataStructure<UavcanNode::BeginFirmwareUpdate::Request> &req,
 	                             uavcan::ServiceResponseDataStructure<UavcanNode::BeginFirmwareUpdate::Response> &rsp);
+
+	uavcan::ParamServer _param_server;
+	ParamManager  _param_mgt;
 
 public:
 
